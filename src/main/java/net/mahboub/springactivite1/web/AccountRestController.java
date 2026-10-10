@@ -1,20 +1,24 @@
 package net.mahboub.springactivite1.web;
 
+import net.mahboub.springactivite1.dto.BankAccountRequestDTO;
+import net.mahboub.springactivite1.dto.BankAccountResponseDTO;
 import net.mahboub.springactivite1.entities.BankAccount;
 import net.mahboub.springactivite1.repositories.BankAccountRespository;
+import net.mahboub.springactivite1.service.AccountService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
 public class AccountRestController {
     private final BankAccountRespository bankAccountRepository;
+    private final AccountService accountService;
 
-    public AccountRestController(BankAccountRespository bankAccountRepository) {
+    public AccountRestController(BankAccountRespository bankAccountRepository, AccountService accountService) {
         this.bankAccountRepository = bankAccountRepository;
+        this.accountService = accountService;
     }
 
     @GetMapping("/bankAccounts")
@@ -29,11 +33,8 @@ public class AccountRestController {
     }
 
     @PostMapping("/bankAccounts")
-    public BankAccount save(@RequestBody BankAccount bankAccount) {
-        if (bankAccount.getId() == null) {
-            bankAccount.setId(UUID.randomUUID().toString());
-        }
-        return bankAccountRepository.save(bankAccount);
+    public BankAccountResponseDTO save(@RequestBody BankAccountRequestDTO bankAccount) {
+        return accountService.addAccount(bankAccount);
     }
 
     @PutMapping("/bankAccounts/{id}")
